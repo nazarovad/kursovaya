@@ -72,43 +72,46 @@ Student* findStudent(Student* head, char* find) {
 }
 
 void removeStudent(Student **head, char* find) {
-
-    Student* tempHead = *head;
-    Student* StundentDelete = findStudent(tempHead, find);
     
-    if (*head == StundentDelete)
-    {
-       (*head)->prev;
-    }
-    else
-    {
-        while ((*head)->prev != NULL)
-        {
-            if (StundentDelete == *head)
+    if (*head != NULL) {
+        while ((*head)->prev != NULL) {
+            if ((*head)->name == find)
             {
-                Student* temp = *head;
-                //(*head)->prev->next = (*head)->next;
-                //(*head)->next->prev = (*head)->prev;
+                if ((*head)->prev != NULL) {
+                    (*head)->prev->next = (*head)->next;
+                }
+                else {
+                    (*head)->next->prev = NULL;
+                }
+                if ((*head)->next != NULL) {
+                    (*head)->next->prev = (*head)->prev;
+                }
+                else {
+                    (*head)->prev->next =  NULL;
+                }
+               
             }
+            *head = (*head)->prev;
         }
-        while ((*head)->next != NULL)
-        {
+        while ((*head)->next != NULL) {
             (*head) = (*head)->next;
         }
+
     }
-   
+    
 }
 
 void printStudent(Student* head) {
-    Student* pthHead = head;
-    Student* pthExamHead = head->headExam;
 
-    if (pthHead == NULL)
+
+    if (head == NULL)
     {
         printf("Студентов нет\n");
     }
     else
     {
+        Student* pthHead = head;
+        Student* pthExamHead = head->headExam;
         while (pthHead != NULL)
         {
             printf("%s %d | ",pthHead->name, pthHead->countExams);
@@ -140,16 +143,21 @@ int main() {
     addStudent(&head, "Саша");
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
+    addStudent(&head, "Liza");
 
     printStudent(head);
 
     findStudent(head, "Саша");
+    findStudent(head, "Саша");
+    findStudent(head, "Саша");
     findStudent(head, "May");
 
     printStudent(head);
+
+    removeStudent(&head, "Andrey");
+
     printStudent(head);
-    removeStudent(head, "Andrey");
-    printStudent(head);
+    
     system("chcp 1251 >> null");
 
 	return 0;
