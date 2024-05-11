@@ -26,7 +26,6 @@ void addStudent(Student **head, char* name) {
     newStudent->prev = *head;
     *head = newStudent;
     newStudent->headExam = NULL;
-
 }
 
 void  addExam(Student** head, Student** headExam, char* name, int grades) {
@@ -39,7 +38,28 @@ void  addExam(Student** head, Student** headExam, char* name, int grades) {
     
     newExam->prev = *headExam;
     *headExam = newExam;
+}
 
+// Поиск по ФИО
+Student* findStudent(Student* head, char* find) {
+    Student* pthHead = head;
+    if (pthHead == NULL)
+    {
+        printf("Студентов нет");
+    }
+    else
+    {
+        while (pthHead != NULL)
+        {
+            if (pthHead->name == find)
+            {
+                printf("Студент найден!");
+                return;
+            }
+            pthHead = pthHead->prev;
+        }
+    }
+    printf("Студент не найден");
 }
 
 void printStudent(Student* head) {
@@ -73,7 +93,9 @@ void printStudent(Student* head) {
 
 int main() {
     system("chcp 1251 >> null");
+    int countStudents = 0;
     Student* head = NULL;
+    
 
     addStudent(&head, "Andrey");
     addExam(&head, &head->headExam, "информатика", 5);
@@ -83,6 +105,11 @@ int main() {
     addExam(&head, &head->headExam, "матика", 5);
 
     printStudent(head);
+
+    findStudent(head, "Саша");
+    findStudent(head, "May");
+
+
 
     system("chcp 1251 >> null");
 
