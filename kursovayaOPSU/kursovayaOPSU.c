@@ -5,7 +5,6 @@
 typedef struct {
     char* name;
     int grades;
-
     struct Exam* prev;
 } Exam;
 
@@ -45,6 +44,8 @@ void  addExam(Student** head, Student** headExam, char* name, int grades) {
 
 void printStudent(Student* head) {
     Student* pthHead = head;
+    Student* pthExamHead = head->headExam;
+
     if (pthHead == NULL)
     {
         printf("Студентов нет");
@@ -53,8 +54,18 @@ void printStudent(Student* head) {
     {
         while (pthHead != NULL)
         {
-            printf("%s %d",pthHead->name, pthHead->countExams);
+            printf("%s %d | ",pthHead->name, pthHead->countExams);
+            while (pthExamHead != NULL)
+            {
+                printf("%s %d", pthExamHead->exam.name, pthExamHead->exam.grades);
+                printf("\n");
+                pthExamHead = pthExamHead->exam.prev;
+            }
             pthHead = pthHead->prev;
+            if (pthHead != NULL)
+            {
+                pthExamHead = pthHead->headExam;
+            }
             printf("\n");
         }
     }
