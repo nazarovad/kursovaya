@@ -22,18 +22,17 @@ typedef struct Student {
 
 void addStudent(Student **head, char* name) {
     Student* newStudent = (Student*)malloc(sizeof(Student));
+
     newStudent->countExams = 0;
     newStudent->name = name;
+    newStudent->headExam = NULL;
 
     newStudent->prev = *head;
-    newStudent->next = NULL;
     if (*head != NULL) {
         (*head)->next = newStudent;
     }
 
-
     *head = newStudent;
-    newStudent->headExam = NULL;
 }
 
 void addExam(Student** head, Student** headExam, char* name, int grades) {
@@ -71,39 +70,43 @@ Student* findStudent(Student* head, char* find) {
     return false;
 }
 
-void removeStudent(Student **head, char* find) {
-    
-    if (*head != NULL) {
-        while ((*head)->prev != NULL) {
-            if ((*head)->name == find)
-            {
-                if ((*head)->prev != NULL) {
-                    (*head)->prev->next = (*head)->next;
-                }
-                else {
-                    (*head)->next->prev = NULL;
-                }
-                if ((*head)->next != NULL) {
-                    (*head)->next->prev = (*head)->prev;
-                }
-                else {
-                    (*head)->prev->next =  NULL;
-                }
-               
-            }
-            *head = (*head)->prev;
-        }
-        while ((*head)->next != NULL) {
-            (*head) = (*head)->next;
-        }
-
+Student* removeStudent(Student* head, char* find) {
+    Student* tempHead = head;
+    if (head->name == find) {
+        Student* temp = head;
+        head = head->prev;
+        head->next = NULL;
+        free(temp);
+        return head;
     }
+    while (head != NULL) {
+        if (head->name == find) {
+            Student* temp = head;
+            if (head->prev != NULL) {
+                head->prev->next = head->next;
+            }
+            else {
+                head->next->prev = NULL;
+            }
+            if (head->next != NULL) {
+                head->next->prev = head->prev;
+            }
+            else {
+                head->prev->next = NULL;
+            }
+
+
+            head->prev = head;
+            free(temp);
+            return tempHead;
+        }
+        head = head->prev;
+    }
+    
     
 }
 
 void printStudent(Student* head) {
-
-
     if (head == NULL)
     {
         printf("Студентов нет\n");
@@ -133,8 +136,10 @@ void printStudent(Student* head) {
 
 int main() {
     system("chcp 1251 >> null");
+
     int countStudents = 0;
     Student* head = NULL;
+    Student* tail = head;
     
 
     addStudent(&head, "Andrey");
@@ -143,22 +148,14 @@ int main() {
     addStudent(&head, "Саша");
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
-    addStudent(&head, "Liza");
+    addStudent(&head, "Лиза");
 
     printStudent(head);
 
-    findStudent(head, "Саша");
-    findStudent(head, "Саша");
-    findStudent(head, "Саша");
-    findStudent(head, "May");
-
-    printStudent(head);
-
-    removeStudent(&head, "Andrey");
+    head = removeStudent(head, "Лиза");
 
     printStudent(head);
     
-    system("chcp 1251 >> null");
 
 	return 0;
 }
