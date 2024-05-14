@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -20,12 +20,13 @@ typedef struct Student {
 } Student;
 
 
-void addStudent(Student **head, char* name) {
+void addStudent(Student **head, char* name, int age) {
     Student* newStudent = (Student*)malloc(sizeof(Student));
 
     newStudent->countExams = 0;
     newStudent->name = name;
     newStudent->headExam = NULL;
+    newStudent->age = age;
 
     newStudent->prev = *head;
     if (*head != NULL) {
@@ -106,6 +107,35 @@ Student* removeStudent(Student* head, char* find) {
     
 }
 
+//----Запись базы даных-----
+void saveToFile(Student* head, const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        fprintf(stderr, "Ошибка открытия файла %s\n", filename);
+        return;
+    }
+
+    Student* current = head;
+    while (current != NULL) {
+        fprintf(file, "Имя: %s\n", current->name);
+        fprintf(file, "Возраст: %d\n", current->age);
+        fprintf(file, "Количество экзаменов: %d\n", current->countExams);
+
+        Exam* exam = current->headExam;
+        while (exam != NULL) {
+            fprintf(file, "    Название экзамена: %s\n", exam->name);
+            fprintf(file, "    Оценка: %d\n", exam->grades);
+            exam = exam->prev;
+        }
+
+        fprintf(file, "\n");
+        current = current->prev;
+    }
+
+    fclose(file);
+}
+
+
 void printStudent(Student* head) {
     if (head == NULL)
     {
@@ -120,7 +150,7 @@ void printStudent(Student* head) {
             printf("%s %d | ",pthHead->name, pthHead->countExams);
             while (pthExamHead != NULL)
             {
-                printf("%s %d", pthExamHead->exam.name, pthExamHead->exam.grades);
+                printf("%s %d ", pthExamHead->exam.name, pthExamHead->exam.grades);
                 printf("\n");
                 pthExamHead = pthExamHead->exam.prev;
             }
@@ -142,17 +172,20 @@ int main() {
     Student* tail = head;
     
 
-    addStudent(&head, "Andrey");
+    addStudent(&head, "Andrey", 7);
     addExam(&head, &head->headExam, "информатика", 5);
     addExam(&head, &head->headExam, "устный р", 5);
-    addStudent(&head, "Саша");
+    addStudent(&head, "Саша", 2);
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
-    addStudent(&head, "Лиза");
+    addStudent(&head, "Лиза", 1);
 
     printStudent(head);
 
-    head = removeStudent(head, "Лиза");
+    //head = removeStudent(head, "Лиза");
+
+    saveToFile(head, "students.txt");
+    saveToFile(head, "students23.txt");
 
     printStudent(head);
     
