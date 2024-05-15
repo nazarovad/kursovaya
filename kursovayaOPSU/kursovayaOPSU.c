@@ -20,12 +20,15 @@ typedef struct Student {
 } Student;
 
 
+
 void addStudent(Student **head, char* name, int age) {
+
     Student* newStudent = (Student*)malloc(sizeof(Student));
 
     newStudent->countExams = 0;
     newStudent->name = name;
     newStudent->headExam = NULL;
+    newStudent->next = NULL;
     newStudent->age = age;
 
     newStudent->prev = *head;
@@ -107,7 +110,7 @@ Student* removeStudent(Student* head, char* find) {
     
 }
 
-//----Запись базы даных-----
+//----Запись всей базы даных в файл-----
 void saveToFile(Student* head, const char* filename) {
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
@@ -134,6 +137,84 @@ void saveToFile(Student* head, const char* filename) {
 
     fclose(file);
 }
+
+
+
+
+//----boubleSort----
+Student*  sortStudent(Student* head) {
+    Student* tempi = head;
+    Student* tempj = head;
+
+    while (tempi != NULL || tempi->prev != NULL) {
+        while (tempj->prev != NULL) {
+            if (tempj->countExams > tempj->prev->countExams) // Уловия выполнения сортировки
+            {
+                if (tempj->prev->prev != NULL) // Если у нас не последняя пара (главное не забыть для else также сделать)
+                {
+                    if (tempj->next == NULL) // Если у нас самая первая пара
+                    {
+                        tempj->prev = tempj->prev->prev;
+                        tempj->next = tempj->prev->next;
+                        tempj->prev->next = tempj;
+                        tempj->next->prev = tempj;
+                        tempj->next->next = NULL;
+
+                        tempj = tempj->next;
+
+                    }
+                    else // Если у нас не первая пара
+                    {
+                        tempj->next->prev = tempj->prev;
+                        tempj->prev = tempj->prev->prev;
+                        tempj->next->prev->prev = tempj;
+                        tempj->next->prev->next = tempj->next;
+                        tempj->next = tempj->prev;
+                        tempj->next = tempj->next->next;
+                        tempj->prev->next = tempj;
+
+                        tempj = tempj->next; // смещаем голову
+                    }
+                }
+                else // если у нас последняя пара
+                {
+                    if (tempj->next == NULL) // Если у нас самая первая пара
+                    {
+                        tempj->prev->next = NULL;
+                        tempj->prev->prev = tempj;
+                        tempj->next = tempj->prev;
+                        tempj->prev = NULL;
+
+                        tempj = tempj->next;
+                    }
+                    else // Если у нас не первая пара
+                    {
+                        tempj->next->prev = tempj->prev;
+                        tempj->next->prev->prev = tempj;
+                        tempj->prev->next = tempj->next;
+                        tempj->next = tempj->prev;
+                        tempj->prev = NULL;
+
+                        tempj = tempj->next; // смещаем голову
+                    }
+                }
+            }
+            tempj = tempj->prev;
+        }
+        tempi = tempi->prev;
+        tempj = head;
+    }
+
+
+    while (head->next != NULL) {
+        head = head->next;
+    }
+    return head;
+}
+
+
+
+
 
 
 void printStudent(Student* head) {
@@ -175,17 +256,24 @@ int main() {
     addStudent(&head, "Andrey", 7);
     addExam(&head, &head->headExam, "информатика", 5);
     addExam(&head, &head->headExam, "устный р", 5);
-    addStudent(&head, "Саша", 2);
+
+    addStudent(&head, "Саша", 1);
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
-    addStudent(&head, "Лиза", 1);
 
+    addStudent(&head, "Лиза", 2);
+    addExam(&head, &head->headExam, "матика", 5);
+    addExam(&head, &head->headExam, "матика", 5);
+    addExam(&head, &head->headExam, "матика", 5);
+
+   
     printStudent(head);
 
     //head = removeStudent(head, "Лиза");
+    printf("\n------------\n");
+    head = sortStudent(head);
 
-    saveToFile(head, "students.txt");
-    saveToFile(head, "students23.txt");
+
 
     printStudent(head);
     

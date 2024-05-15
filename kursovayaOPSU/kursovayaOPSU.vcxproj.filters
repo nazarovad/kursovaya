@@ -13,10 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\Student">
+      <UniqueIdentifier>{194c3680-83e2-47f4-83e4-a65bbba12a73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kursovayaOPSU.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="student.c">
+      <Filter>Исходные файлы\Student</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="student.h">
+      <Filter>Исходные файлы\Student</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
