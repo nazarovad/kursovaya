@@ -151,7 +151,7 @@ Student*  sortStudent(Student* head) {
 
     while (tempi->prev != NULL) {
         while (tempj->prev != NULL) {
-            if (tempj->countExams > tempj->prev->countExams) // Уловия выполнения сортировки
+            if (strcmp(tempj->name, tempj->prev->name) > 0) // Уловия выполнения сортировки
             {
                 if (tempj->prev->prev != NULL) // Если у нас не последняя пара (главное не забыть для else также сделать)
                 {
@@ -164,6 +164,11 @@ Student*  sortStudent(Student* head) {
                         tempj->next->next = NULL;
 
                         tempj = tempj->next;
+                        if (tempi->next != NULL) {
+                            tempi = tempi->next;
+                        }
+                        
+                        head = head->next;  
 
                     }
                     else // Если у нас не первая пара
@@ -189,6 +194,11 @@ Student*  sortStudent(Student* head) {
                         tempj->prev = NULL;
 
                         tempj = tempj->next;
+                        if (tempi->next != NULL) {
+                            tempi = tempi->next;
+                        }
+                        head = head->next;
+
                     }
                     else // Если у нас не первая пара
                     {
@@ -199,14 +209,17 @@ Student*  sortStudent(Student* head) {
                         tempj->prev = NULL;
 
                         tempj = tempj->next; // смещаем голову
+                        
                     }
                 }
             }
             tempj = tempj->prev;
         }
-        if (tempj->prev != NULL) {
+        if (tempi->prev != NULL) {
+            //tempj = head;
+            tempj = tempi;
             tempi = tempi->prev;
-            tempj = head;
+            
         }
         else {
             break;
@@ -217,6 +230,8 @@ Student*  sortStudent(Student* head) {
     while (head->next != NULL) {
         head = head->next;
     }
+
+    
     return head;
 }
 
@@ -260,26 +275,23 @@ int main() {
     Student* tail = head;
     
 
-    addStudent(&head, "Andrey", 7);
+    addStudent(&head, "АА", 7);
     addExam(&head, &head->headExam, "информатика", 5);  
 
+    addStudent(&head, "ААБ", 3);
 
-
-    addStudent(&head, "Саша", 1);
+    addStudent(&head, "АВ", 1);
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
 
-    addStudent(&head, "Лиза", 2);
+    addStudent(&head, "В", 2);
 
     addExam(&head, &head->headExam, "матика", 5);
     addExam(&head, &head->headExam, "матика", 5);
     addExam(&head, &head->headExam, "устный р", 5);
     addExam(&head, &head->headExam, "матика", 5);
-    addStudent(&head, "Вика", 3);
+   
 
-  //Liza Saha Andre
-  // Saha Liza Andrey
-  // Saha Andrey Liza
     printStudent(head);
 
     //head = removeStudent(head, "Лиза");
