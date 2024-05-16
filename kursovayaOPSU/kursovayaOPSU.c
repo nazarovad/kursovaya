@@ -143,10 +143,13 @@ void saveToFile(Student* head, const char* filename) {
 
 //----boubleSort----
 Student*  sortStudent(Student* head) {
+    if (head->prev == NULL && head->next == NULL) {
+        return head;
+    }
     Student* tempi = head;
     Student* tempj = head;
 
-    while (tempi != NULL || tempi->prev != NULL) {
+    while (tempi->prev != NULL) {
         while (tempj->prev != NULL) {
             if (tempj->countExams > tempj->prev->countExams) // Уловия выполнения сортировки
             {
@@ -201,8 +204,13 @@ Student*  sortStudent(Student* head) {
             }
             tempj = tempj->prev;
         }
-        tempi = tempi->prev;
-        tempj = head;
+        if (tempj->prev != NULL) {
+            tempi = tempi->prev;
+            tempj = head;
+        }
+        else {
+            break;
+        }
     }
 
 
@@ -228,11 +236,10 @@ void printStudent(Student* head) {
         Student* pthExamHead = head->headExam;
         while (pthHead != NULL)
         {
-            printf("%s %d | ",pthHead->name, pthHead->countExams);
+            printf("%s %d |",pthHead->name, pthHead->countExams);
             while (pthExamHead != NULL)
             {
-                printf("%s %d ", pthExamHead->exam.name, pthExamHead->exam.grades);
-                printf("\n");
+                printf("| %s %d ", pthExamHead->exam.name, pthExamHead->exam.grades);
                 pthExamHead = pthExamHead->exam.prev;
             }
             pthHead = pthHead->prev;
@@ -254,19 +261,25 @@ int main() {
     
 
     addStudent(&head, "Andrey", 7);
-    addExam(&head, &head->headExam, "информатика", 5);
-    addExam(&head, &head->headExam, "устный р", 5);
+    addExam(&head, &head->headExam, "информатика", 5);  
+
+
 
     addStudent(&head, "Саша", 1);
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
 
     addStudent(&head, "Лиза", 2);
-    addExam(&head, &head->headExam, "матика", 5);
-    addExam(&head, &head->headExam, "матика", 5);
-    addExam(&head, &head->headExam, "матика", 5);
 
-   
+    addExam(&head, &head->headExam, "матика", 5);
+    addExam(&head, &head->headExam, "матика", 5);
+    addExam(&head, &head->headExam, "устный р", 5);
+    addExam(&head, &head->headExam, "матика", 5);
+    addStudent(&head, "Вика", 3);
+
+  //Liza Saha Andre
+  // Saha Liza Andrey
+  // Saha Andrey Liza
     printStudent(head);
 
     //head = removeStudent(head, "Лиза");
