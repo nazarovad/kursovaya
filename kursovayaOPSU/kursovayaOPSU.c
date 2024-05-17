@@ -11,9 +11,10 @@ typedef struct {
 
 typedef struct Student {
     Exam exam;
-    char* name;
-    int age;
-    int countExams;
+    char* name; // Имя
+    char* surname; // Фамилия
+    char* middleName; // Отчество
+    int countExams; // Кол-во экзаменов 
     struct Exam* headExam;
     struct Student* prev;
     struct Student* next;
@@ -21,7 +22,7 @@ typedef struct Student {
 
 
 
-void addStudent(Student **head, char* name, int age) {
+void addStudent(Student **head, char* name) {
 
     Student* newStudent = (Student*)malloc(sizeof(Student));
 
@@ -29,7 +30,6 @@ void addStudent(Student **head, char* name, int age) {
     newStudent->name = name;
     newStudent->headExam = NULL;
     newStudent->next = NULL;
-    newStudent->age = age;
 
     newStudent->prev = *head;
     if (*head != NULL) {
@@ -107,6 +107,8 @@ Student* removeStudent(Student* head, char* find) {
         head = head->prev;
     }
     
+    printf("Студент не был найден");
+    return tempHead;
     
 }
 
@@ -121,7 +123,7 @@ void saveToFile(Student* head, const char* filename) {
     Student* current = head;
     while (current != NULL) {
         fprintf(file, "Имя: %s\n", current->name);
-        fprintf(file, "Возраст: %d\n", current->age);
+        //fprintf(file, "Возраст: %d\n", current->age);
         fprintf(file, "Количество экзаменов: %d\n", current->countExams);
 
         Exam* exam = current->headExam;
@@ -136,6 +138,44 @@ void saveToFile(Student* head, const char* filename) {
     }
 
     fclose(file);
+}
+
+
+void toChangeDataStudent(Student *head) {
+    char* name;
+    printf("Пожайлуйства введите имя студента: ");
+    scanf("%s", &name);
+ 
+    
+    Student* student = findStudent(head, name);
+    if (student == false) {
+        return;
+    }
+    
+
+    printf(
+        "Изменить имя: %s ", student->name, 
+        "Изменить фамилию: "
+        "Изменить отчество: "
+        "Изменить год рождения: "
+        "Изменить сведения об экзаменах: "
+        "Изменить сведения о зачетах: "
+    );
+
+    int choise = 1;
+    char* enterString;
+    int enterInteger;
+    switch (choise)
+    {
+    case 1:
+        printf("Изменить имя студента %s: ", student->name);
+        scanf("%s", &enterString);
+        student->name = enterString;
+        break;
+    default:
+        break;
+    }
+    
 }
 
 
@@ -181,6 +221,9 @@ Student*  sortStudent(Student* head) {
                         tempj->next = tempj->next->next;
                         tempj->prev->next = tempj;
 
+                        if (tempj == tempi) {
+                            tempi = tempi->next;
+                        }
                         tempj = tempj->next; // смещаем голову
                     }
                 }
@@ -208,6 +251,9 @@ Student*  sortStudent(Student* head) {
                         tempj->next = tempj->prev;
                         tempj->prev = NULL;
 
+                        if (tempj == tempi) {
+                            tempi = tempi->next;
+                        }
                         tempj = tempj->next; // смещаем голову
                         
                     }
@@ -216,8 +262,8 @@ Student*  sortStudent(Student* head) {
             tempj = tempj->prev;
         }
         if (tempi->prev != NULL) {
-            //tempj = head;
-            tempj = tempi;
+            tempj = head;
+            //tempj = tempi;
             tempi = tempi->prev;
             
         }
@@ -226,7 +272,7 @@ Student*  sortStudent(Student* head) {
         }
     }
 
-
+    //-----проверка на всяких случай-----
     while (head->next != NULL) {
         head = head->next;
     }
@@ -234,11 +280,6 @@ Student*  sortStudent(Student* head) {
     
     return head;
 }
-
-
-
-
-
 
 void printStudent(Student* head) {
     if (head == NULL)
@@ -275,16 +316,16 @@ int main() {
     Student* tail = head;
     
 
-    addStudent(&head, "АА", 7);
+    addStudent(&head, "Андрей");
     addExam(&head, &head->headExam, "информатика", 5);  
 
-    addStudent(&head, "ААБ", 3);
+    addStudent(&head, "Саша");
 
-    addStudent(&head, "АВ", 1);
+    addStudent(&head, "Вика");
     addExam(&head, &head->headExam, "литература", 5);
     addExam(&head, &head->headExam, "матика", 5);
 
-    addStudent(&head, "В", 2);
+    addStudent(&head, "Лиза");
 
     addExam(&head, &head->headExam, "матика", 5);
     addExam(&head, &head->headExam, "матика", 5);
@@ -297,6 +338,8 @@ int main() {
     //head = removeStudent(head, "Лиза");
     printf("\n------------\n");
     head = sortStudent(head);
+
+
 
 
 
