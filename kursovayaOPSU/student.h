@@ -1,6 +1,7 @@
 #ifndef KURsovayaOPSU_H
 #define KURsovayaOPSU_H
 
+
 typedef struct {
     char* name;
     char* examDate;
@@ -20,7 +21,7 @@ typedef struct Student {
 } Student;
 
 void addStudent(Student** head, char* name);
-void addExam(Student* head, Student** headExam, char* name, char* examDate);
+void addExam(Student* head, Student* headExam, char* name, char* examDate);
 
 // Поиск по ФИО
 Student* findStudent(Student* head, char* find);
@@ -28,6 +29,6 @@ Student* removeStudent(Student* head, char* find);
 void saveToFile(Student* head, const char* filename);
 Student* sortStudent(Student* head);
 void printStudentInfo(Student* head, char* option, ...);
-void toChangeDataStudent(Student* head);
+
 
 #endif

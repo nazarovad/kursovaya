@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <string.h>
 #include "student.h";
 
 
@@ -23,16 +24,18 @@ void addStudent(Student** head, char* name) {
     *head = newStudent;
 }
 
-void addExam(Student* head, Student** headExam, char* name, char* examDate) {
+void addExam(Student* head, Student* headExam, char* name, char* examDate) {
     Exam* newExam = (Exam*)malloc(sizeof(Exam));
     Student* pathStudent = head;
 
     pathStudent->countExams++;
+    //strcpy(newExam->name, name);
+
     newExam->name = name;
     newExam->examDate = examDate;
 
-    newExam->prev = *headExam;
-    *headExam = newExam;
+    newExam->prev = headExam;
+    pathStudent->headExam = newExam;
 }
 
 // Поиск по ФИО
@@ -41,6 +44,7 @@ Student* findStudent(Student* head, char* find) {
     if (pthHead == NULL)
     {
         printf("Студентов нет");
+        return false;
     }
     else
     {
@@ -125,10 +129,7 @@ void saveToFile(Student* head, const char* filename) {
 }
 
 
-void toChangeDataStudent(Student *head) {
-    printStudentInfo(head, "findInfo", "Андрей");
-    
-}
+
 
 
 
