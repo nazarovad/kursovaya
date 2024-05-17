@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 typedef struct {
     char* name;
-    int grades;
+    char* examDate;
     struct Exam* prev;
 } Exam;
 
@@ -15,6 +16,7 @@ typedef struct Student {
     char* surname; // Фамилия
     char* middleName; // Отчество
     int countExams; // Кол-во экзаменов 
+    char* birthday; // День рождения
     struct Exam* headExam;
     struct Student* prev;
     struct Student* next;
@@ -22,30 +24,30 @@ typedef struct Student {
 
 
 
-void addStudent(Student **head, char* name) {
+    void addStudent(Student **head, char* name) {
 
-    Student* newStudent = (Student*)malloc(sizeof(Student));
+        Student* newStudent = (Student*)malloc(sizeof(Student));
 
-    newStudent->countExams = 0;
-    newStudent->name = name;
-    newStudent->headExam = NULL;
-    newStudent->next = NULL;
+        newStudent->countExams = 0;
+        newStudent->name = name;
+        newStudent->headExam = NULL;
+        newStudent->next = NULL;
 
-    newStudent->prev = *head;
-    if (*head != NULL) {
-        (*head)->next = newStudent;
+        newStudent->prev = *head;
+        if (*head != NULL) {
+            (*head)->next = newStudent;
+        }
+
+        *head = newStudent;
     }
 
-    *head = newStudent;
-}
-
-void addExam(Student** head, Student** headExam, char* name, int grades) {
+void addExam(Student** head, Student** headExam, char* name, char* examDate) {
     Exam* newExam = (Exam*)malloc(sizeof(Exam));
     Student* pathStudent = *head;
     
     pathStudent->countExams++;
     newExam->name = name;
-    newExam->grades = grades;
+    newExam->examDate = examDate;
     
     newExam->prev = *headExam;
     *headExam = newExam;
@@ -129,7 +131,7 @@ void saveToFile(Student* head, const char* filename) {
         Exam* exam = current->headExam;
         while (exam != NULL) {
             fprintf(file, "    Название экзамена: %s\n", exam->name);
-            fprintf(file, "    Оценка: %d\n", exam->grades);
+            fprintf(file, "    Дата сдачи: %s\n", exam->examDate);
             exam = exam->prev;
         }
 
@@ -142,39 +144,7 @@ void saveToFile(Student* head, const char* filename) {
 
 
 void toChangeDataStudent(Student *head) {
-    char* name;
-    printf("Пожайлуйства введите имя студента: ");
-    scanf("%s", &name);
- 
-    
-    Student* student = findStudent(head, name);
-    if (student == false) {
-        return;
-    }
-    
-
-    printf(
-        "Изменить имя: %s ", student->name, 
-        "Изменить фамилию: "
-        "Изменить отчество: "
-        "Изменить год рождения: "
-        "Изменить сведения об экзаменах: "
-        "Изменить сведения о зачетах: "
-    );
-
-    int choise = 1;
-    char* enterString;
-    int enterInteger;
-    switch (choise)
-    {
-    case 1:
-        printf("Изменить имя студента %s: ", student->name);
-        scanf("%s", &enterString);
-        student->name = enterString;
-        break;
-    default:
-        break;
-    }
+    //printStudentInfo(head, "fullInfo");
     
 }
 
@@ -281,30 +251,66 @@ Student*  sortStudent(Student* head) {
     return head;
 }
 
-void printStudent(Student* head) {
+void printStudentInfo(Student* head, char* option, ...) {
+
+    va_list args;
     if (head == NULL)
     {
         printf("Студентов нет\n");
     }
     else
     {
-        Student* pthHead = head;
-        Student* pthExamHead = head->headExam;
-        while (pthHead != NULL)
+        if (option == "fullInfo")
         {
-            printf("%s %d |",pthHead->name, pthHead->countExams);
-            while (pthExamHead != NULL)
+            Student* student = head;
+            Exam* exam;
+            while (student != NULL)
             {
-                printf("| %s %d ", pthExamHead->exam.name, pthExamHead->exam.grades);
-                pthExamHead = pthExamHead->exam.prev;
+                exam = student->headExam;
+                printf("Имя: %s\n", student->name);
+                /*printf("Фамилия: %s\n", student->surname);
+                printf("Отчество: %s\n", student->middleName);
+                printf("Дата рождения: %s\n", student->birthday);
+                printf("Сведения о экзаенах:\n");
+                */
+                while (exam != NULL) {
+                    printf("    Название экзамена: %s\n", exam->name);
+                    printf("    Дата сдачи: %s\n", exam->examDate);
+                    exam = exam->prev;
+                }
+                printf("\n");
+                student = student->prev;
             }
-            pthHead = pthHead->prev;
-            if (pthHead != NULL)
-            {
-                pthExamHead = pthHead->headExam;
-            }
-            printf("\n");
         }
+        else if (option == "findInfo") {
+            va_start(args, option);
+            char* find = va_arg(args, char*);
+            Student* student = findStudent(head, find);
+            if (student == false) {
+                return;
+            }
+            Exam* exam;
+            while (student != NULL)
+            {
+                exam = student->headExam;
+                printf("Имя: %s\n", student->name);
+                /*printf("Фамилия: %s\n", student->surname);
+                printf("Отчество: %s\n", student->middleName);
+                printf("Дата рождения: %s\n", student->birthday);
+                printf("Сведения о экзаенах:\n");
+                */
+                while (exam != NULL) {
+                    printf("    Название экзамена: %s\n", exam->name);
+                    printf("    Дата сдачи: %s\n", exam->examDate);
+                    exam = exam->prev;
+                }
+                printf("\n");
+                student = student->prev;
+            }
+
+            va_end(args);
+        }
+       
     }
 }
 
@@ -317,34 +323,36 @@ int main() {
     
 
     addStudent(&head, "Андрей");
-    addExam(&head, &head->headExam, "информатика", 5);  
+    addExam(&head, &head->headExam, "информатика", "01.01.23");
 
     addStudent(&head, "Саша");
 
     addStudent(&head, "Вика");
-    addExam(&head, &head->headExam, "литература", 5);
-    addExam(&head, &head->headExam, "матика", 5);
+    addExam(&head, &head->headExam, "литература", "01.01.23");
+    addExam(&head, &head->headExam, "матика", "01.01.23");
 
     addStudent(&head, "Лиза");
 
-    addExam(&head, &head->headExam, "матика", 5);
-    addExam(&head, &head->headExam, "матика", 5);
-    addExam(&head, &head->headExam, "устный р", 5);
-    addExam(&head, &head->headExam, "матика", 5);
+    addExam(&head, &head->headExam, "матика", "01.01.23");
+    addExam(&head, &head->headExam, "матика", "01.01.23");
+    addExam(&head, &head->headExam, "устный р", "01.01.23");
+    addExam(&head, &head->headExam, "матика", "01.01.23");
    
 
-    printStudent(head);
+    printStudentInfo(head, "fullInfo");
 
     //head = removeStudent(head, "Лиза");
     printf("\n------------\n");
-    head = sortStudent(head);
+    //head = sortStudent(head);
 
 
 
 
 
-    printStudent(head);
-    
+    //printStudentInfo(head, "fullInfo");
+    printStudentInfo(head, "findInfo", "Андрей");
+    printStudentInfo(head, "findInfo", "Андрей");
+
 
 	return 0;
 }
