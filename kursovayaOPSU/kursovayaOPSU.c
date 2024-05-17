@@ -64,14 +64,12 @@ void toChangeDataStudent(Student* head) {
         student->birthday = endterString;
         break;
     case 5:
+        system("pause");
         system("cls");
         printf("Экзаменационные сведения: \n");
-        Exam* exam = student->headExam;
-        while (exam != NULL) {
-            printf("    Название экзамена: %s\n", exam->name);
-            printf("    Дата сдачи: %s\n", exam->examDate);
-            exam = exam->prev;
-        }
+
+        printStudentInfo(head, "findExamInfo", name);
+
         printf("Выбери действие:\n");
         printf("(1) Добавить экзамен\n");
         printf("(2) Удалить экзамен\n");
@@ -80,8 +78,8 @@ void toChangeDataStudent(Student* head) {
         if (choice == 1)
         {
             //---Не забыть очистить---
-            char* nameExam = (char*)malloc(10);
-            char* dataExam = (char*)malloc(10);
+            char* nameExam = (char*)malloc(50);
+            char* dataExam = (char*)malloc(50);
             
             printf("Введите название предмета: ");
             scanf("%s", nameExam);
@@ -89,11 +87,12 @@ void toChangeDataStudent(Student* head) {
             printf("Введите дату сдачи предмета: ");
             scanf("%s", dataExam);
             addExam(student, student->headExam, nameExam, dataExam);
+            printf("\nЭкзамен был создан\n");
 
         }
         else if (choice == 2)
         {
-
+            deleteExam(student, "информатика");
         }
         break;
     default:
@@ -101,6 +100,30 @@ void toChangeDataStudent(Student* head) {
     }
     
 }
+
+//void deleteExam(Student* head, char* nameExam) {
+//    Exam* exam = head->headExam;
+//    if (exam->name == nameExam)
+//    {
+//        Student* temp = exam;
+//        head->headExam = exam->prev;
+//        free(temp);
+//    }
+//    else
+//    {
+//        while (exam->prev != NULL) {
+//            if (exam->prev->name == nameExam)
+//            {
+//                Student* temp = exam->prev;
+//                exam->prev = exam->prev->prev;
+//                free(temp);
+//
+//            }
+//        }
+//
+//    }
+// 
+//}
 
 
 
@@ -112,7 +135,9 @@ int main() {
     
 
     addStudent(&head, "Андрей");
+    addExam(head, head->headExam, "литература", "01.01.23");
     addExam(head, head->headExam, "информатика", "01.01.23");
+    
 
     addStudent(&head, "Саша");
 
@@ -146,6 +171,8 @@ int main() {
 
 
     printStudentInfo(head, "fullInfo");
+
+    
 
 
 

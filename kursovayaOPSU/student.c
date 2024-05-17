@@ -24,18 +24,45 @@ void addStudent(Student** head, char* name) {
     *head = newStudent;
 }
 
+//---headExam нам не нужен-----
 void addExam(Student* head, Student* headExam, char* name, char* examDate) {
     Exam* newExam = (Exam*)malloc(sizeof(Exam));
     Student* pathStudent = head;
 
     pathStudent->countExams++;
-    //strcpy(newExam->name, name);
 
     newExam->name = name;
     newExam->examDate = examDate;
 
     newExam->prev = headExam;
     pathStudent->headExam = newExam;
+}
+
+
+
+
+void deleteExam(Student* head, char* nameExam) {
+    Exam* exam = head->headExam;
+    if (exam->name == nameExam)
+    {
+        Student* temp = exam;
+        head->headExam = exam->prev;
+        free(temp);
+    }
+    else
+    {
+        while (exam->prev != NULL) {
+            if (exam->prev->name == nameExam)
+            {
+                Student* temp = exam->prev;
+                exam->prev = exam->prev->prev;
+                free(temp);
+
+            }
+        }
+
+    }
+
 }
 
 // Поиск по ФИО
@@ -272,23 +299,35 @@ void printStudentInfo(Student* head, char* option, ...) {
             if (student == false) {
                 return;
             }
-            Exam* exam;
-            while (student != NULL)
-            {
-                exam = student->headExam;
-                printf("Имя: %s\n", student->name);
-                /*printf("Фамилия: %s\n", student->surname);
-                printf("Отчество: %s\n", student->middleName);
-                printf("Дата рождения: %s\n", student->birthday);
-                printf("Сведения о экзаенах:\n");
-                */
-                while (exam != NULL) {
-                    printf("    Название экзамена: %s\n", exam->name);
-                    printf("    Дата сдачи: %s\n", exam->examDate);
-                    exam = exam->prev;
-                }
-                printf("\n");
-                student = student->prev;
+            Exam* exam = student->headExam;
+
+            printf("Имя: %s\n", student->name);
+            /*printf("Фамилия: %s\n", student->surname);
+            printf("Отчество: %s\n", student->middleName);
+            printf("Дата рождения: %s\n", student->birthday);
+            printf("Сведения о экзаенах:\n");
+            */
+            while (exam != NULL) {
+                printf("    Название экзамена: %s\n", exam->name);
+                printf("    Дата сдачи: %s\n", exam->examDate);
+                exam = exam->prev;
+            }
+
+            va_end(args);
+        }
+        else if (option == "findExamInfo") {
+            va_start(args, option);
+            char* find = va_arg(args, char*);
+            Student* student = findStudent(head, find);
+            if (student == false) {
+                return;
+            }
+
+            Exam* exam = student->headExam;
+            while (exam != NULL) {
+                printf("    Название экзамена: %s\n", exam->name);
+                printf("    Дата сдачи: %s\n", exam->examDate);
+                exam = exam->prev;
             }
 
             va_end(args);
