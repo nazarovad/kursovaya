@@ -27,6 +27,7 @@ void addStudent(Student** head) {
     COUNT_STUDENTS++;
 
     newStudent->countExams = 0;
+    newStudent->countTests = 0;
 
     //---Заполнение анкеты стендента
     printf("Введите имя студента: ");
@@ -46,6 +47,7 @@ void addStudent(Student** head) {
     strcpy(newStudent->birthday, birthday);
 
     newStudent->headExam = NULL;
+    newStudent->headTest = NULL;
     newStudent->next = NULL;
 
     newStudent->prev = *head;
@@ -58,12 +60,21 @@ void addStudent(Student** head) {
 
 
     fseek(stdin, 0, SEEK_END);
-    printf("Добавить экзамены для студента?(y/n)(default no): ");
+    //printf("Добавить экзамены для студента?(y/n)(default no): ");
+    printf(
+        "(1) Добавить экзамен для студента\n"
+        "(2) Добавить зачет для студента\n"
+        "(3) Продолжить\n"
+        "Ваш выбор: "
+    );
     scanf("%c", &choice);
     switch (choice)
     {
-    case 'y':
-        addExam(newStudent, newStudent->headExam);
+    case '1':
+        addExam(newStudent);
+        break;
+    case '2':
+        addTest(newStudent);
         break;
     default:
         system("cls");
@@ -71,7 +82,6 @@ void addStudent(Student** head) {
     }
 }
 
-//---headExam нам не нужен-----
 void addExam(Student* head) {
     system("cls");
     printStudentInfo(head, "findInfo", head->name);
@@ -104,12 +114,21 @@ void addExam(Student* head) {
     if (head->countExams < 5) {
         char choice;
         fseek(stdin, 0, SEEK_END);
-        printf("Добавить еще экзамен?(y/n): ");
+        printf(
+            "(1) Добавить еще экзамен\n"
+            "(2) Добавить еще зачет\n"
+            "(3) Продолжить\n"
+            "Ваш выбор: "
+
+        );
         scanf("%c", &choice);
         switch (choice)
         {
-        case 'y':
+        case '1':
             addExam(head);
+            break;
+        case '2':
+            addTest(head);
             break;
         default:
             system("cls");
@@ -119,7 +138,61 @@ void addExam(Student* head) {
 
 }
 
+//----Добавить зачет----
+void addTest(Student* head) {
+    system("cls");
+    printStudentInfo(head, "findInfo", head->name);
+    if (head->countTests == 10) {
+        printf("Максимальное кол-во зачетов 10.\n");
+        return;
+    }
 
+    Test* newTest = (Test*)malloc(sizeof(Test));
+    Student* pathStudent = head;
+
+    char name[50];
+    char testDate[50];
+    pathStudent->countTests++;
+    //printf("%s", name);
+
+    printf("Добавьте название зачета: ");
+    scanf("%s", &name); printf("\n");
+    strcpy(newTest->name, name);
+
+    printf("Добавьте дату зачета: ");
+    scanf("%s", &testDate); printf("\n");
+    strcpy(newTest->testDate, testDate);
+
+
+    newTest->prev = pathStudent->headTest;
+    pathStudent->headTest = newTest;
+
+
+    if (head->countTests < 10) {
+        char choice;
+        fseek(stdin, 0, SEEK_END);
+        printf(
+            "(1) Добавить еще зачет\n"
+            "(2) Добавить еще экзамен\n"
+            "(3) Продолжить\n"
+            "Ваш выбор: "
+        );
+        scanf("%c", &choice);
+        switch (choice)
+        {
+        case '1':
+            addTest(head);
+            break;
+        case '2':
+            addExam(head);
+            break;
+        default:
+            system("cls");
+            break;
+        }
+    }
+
+}
 
 //---В качестве аргумента мы передаем данные студента, экзамены которого мы хотим удалить---
 void deleteExam(Student* head) {
@@ -160,8 +233,56 @@ void deleteExam(Student* head) {
         return;
 
     }
-
 }
+
+
+
+
+
+void deleteTest(Student* head) {
+    if (head->headTest == NULL) {
+        printf("Ни одного зачета не найдено.\n");
+        return;
+    }
+
+    char nameTest[50];
+    printf("Введить название зачета для удаления: ");
+    scanf("%s", &nameTest);
+
+    Test* test = head->headTest;
+    if (!strcmp(test->name, nameTest))
+    {
+        Student* temp = test;
+        head->headTest = test->prev;
+        head->countTests--;
+        free(temp);
+        printf("Зачет был удален.\n");
+        return;
+    }
+    else
+    {
+        while (test->prev != NULL) {
+            if (!strcmp(test->prev->name, nameTest))
+            {
+                Student* temp = test->prev;
+                test->prev = test->prev->prev;
+                head->countTests--;
+                free(temp);
+                printf("Зачет был удален.\n");
+                return;
+
+            }
+        }
+        printf("Зачет не был найден.\n");
+        return;
+
+    }
+}
+
+
+
+
+
 
 // Поиск по ФИО
 Student* findStudent(Student* head, char* find) {
@@ -186,7 +307,7 @@ Student* findStudent(Student* head, char* find) {
     return false;
 }
 
-
+//---Нужно сделать очистку памяти для зачетов и экзаменов---
 void removeStudent(Student** head, char* find) {
     Student* tempHead = *head;
     if (!strcmp((*head)->name, find)) { // 
@@ -391,22 +512,32 @@ void printStudentInfo(Student* head, char* option, ...) {
         {
             Student* student = head;
             Exam* exam;
+            Test* test;
             while (student != NULL)
             {
                 exam = student->headExam;
+                test = student->headTest;
                 printf("Имя: %s\n", student->name);
                 printf("Фамилия: %s\n", student->surname);
                 printf("Отчество: %s\n", student->middleName);
                 printf("Дата рождения: %s\n", student->birthday);
-                printf("Сведения о экзаенах:\n");
+                printf("Сведения о экзаменах:\n");
                 
                 while (exam != NULL) {
                     printf("    Название экзамена: %s\n", exam->name);
                     printf("    Дата сдачи: %s\n", exam->examDate);
                     exam = exam->prev;
                 }
+
+                printf("Сведения о зачетах:\n");
+                while (test != NULL) {
+                    printf("    Название зачета: %s\n", test->name);
+                    printf("    Дата сдачи: %s\n", test->testDate);
+                    test = test->prev;
+                }
                 printf("\n");
                 student = student->prev;
+
             }
         }
         else if (option == "findInfo") {
@@ -417,6 +548,7 @@ void printStudentInfo(Student* head, char* option, ...) {
                 return;
             }
             Exam* exam = student->headExam;
+            Test* test = student->headTest;
 
             printf("Имя: %s\n", student->name);
             printf("Фамилия: %s\n", student->surname);
@@ -428,6 +560,13 @@ void printStudentInfo(Student* head, char* option, ...) {
                 printf("    Название экзамена: %s\n", exam->name);
                 printf("    Дата сдачи: %s\n", exam->examDate);
                 exam = exam->prev;
+            }
+
+            printf("Сведения о зачетах:\n");
+            while (test != NULL) {
+                printf("    Название зачета: %s\n", test->name);
+                printf("    Дата сдачи: %s\n", test->testDate);
+                test = test->prev;
             }
 
             va_end(args);
@@ -451,6 +590,24 @@ void printStudentInfo(Student* head, char* option, ...) {
 
             va_end(args);
         }
+        else if (option == "findTestInfo") {
+            va_start(args, option);
+            char* find = va_arg(args, char*);
+            Student* student = findStudent(head, find);
+            if (student == false) {
+                return;
+            }
+
+            Test* test = student->headTest;
+            while (test != NULL) {
+                printf("    Название зачета: %s\n", test->name);
+                printf("    Дата сдачи: %s\n", test->testDate);
+                test = test->prev;
+            }
+
+            va_end(args);
+        }
+        
     }
 }
 
@@ -517,7 +674,7 @@ void mainMenu() {
             break;
         case '7':
             system("cls");
-            printStudentInfo(head, "findInfo", findedStudent->name);
+            printStudentInfo(head, "findInfo", findedStudent->name); // enabled
             break;
         default:
             break;
@@ -550,6 +707,7 @@ void toChangeDataStudent(Student* head) {
         printf("(3) Изменить отчество студента \n");
         printf("(4) Изменить дату рождения студента \n");
         printf("(5) Изменить экзаменационные сведения\n");
+        printf("(6) Изменить зачетные сведения\n");
         printf("Ваш выбор: ");
         fseek(stdin, 0, SEEK_END);
         scanf("%d", &choice);
@@ -593,7 +751,6 @@ void toChangeDataStudent(Student* head) {
             system("cls");
             break;
         case 5:
-            //system("pause");
             system("cls");
             printf("Экзаменационные сведения: \n");
 
@@ -620,6 +777,42 @@ void toChangeDataStudent(Student* head) {
                 deleteExam(student);
                 system("cls");
                 printf("Экзамен был удален\n");
+                break;
+            }
+            else if (choice == 3)
+            {
+                system("cls");
+                break;
+            }
+            system("cls");
+            break;
+        case 6:
+            system("cls");
+            printf("Зачетные сведения: \n");
+
+            printStudentInfo(head, "findTestInfo", name);
+
+            printf("Выбери действие:\n");
+            printf("(1) Добавить зачет\n");
+            printf("(2) Удалить зачет\n");
+            printf("(3) Назад\n");
+            printf("Ваш выбор: ");
+            fseek(stdin, 0, SEEK_END);
+            scanf("%d", &choice);
+            if (choice == 1)
+            {
+                printf("Информация о зачетах:\n");
+                printStudentInfo(student, "findTestInfo", student->name);
+                addTest(student, student->headTest);
+                printf("Зачет был создан\n");
+                break;
+
+            }
+            else if (choice == 2)
+            {
+                deleteTest(student);
+                system("cls");
+                printf("Зачет был удален\n");
                 break;
             }
             else if (choice == 3)
