@@ -20,9 +20,9 @@ typedef struct Student {
     struct Student* next;
 } Student;
 
-void addStudent(Student** head, char* name);
-void addExam(Student* head, Student* headExam, char* name, char* examDate);
-void deleteExam(Student* head, char* nameExam);
+void addStudent(Student** head);
+void addExam(Student* head);
+void deleteExam(Student* head);
 
 // Поиск по ФИО
 Student* findStudent(Student* head, char* find);
@@ -30,7 +30,13 @@ Student* removeStudent(Student* head, char* find);
 void saveToFile(Student* head, const char* filename);
 Student* sortStudent(Student* head);
 void printStudentInfo(Student* head, char* option, ...);
+void mainMenu();
+
+int COUNT_STUDENTS;
+
 
 
 
 #endif
+
+

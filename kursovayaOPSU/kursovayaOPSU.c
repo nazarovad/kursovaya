@@ -7,10 +7,9 @@
 #include <string.h>
 
 
-
 void toChangeDataStudent(Student* head) {
 
-    char* name = "Андрей";
+    char name[50] = "Андрей";
     printf("Для корректировки введите имя студента");
     //scanf("%s", &name);
     Student* student = findStudent(head, name);
@@ -22,7 +21,7 @@ void toChangeDataStudent(Student* head) {
     printStudentInfo(head, "findInfo", name);
 
     int choice = 5;
-    char* endterString;
+    char endterString[50];
     int enterInteher;
     printf("Выбери действие: \n");
     printf("(0) Выход для програмы\n");
@@ -41,28 +40,28 @@ void toChangeDataStudent(Student* head) {
         printf("Имя студента %s\n", student->name);
         printf("Для изменения введите имя: ");
         scanf("%s", &endterString);
-        student->name = endterString;
+        strcpy(student->name, endterString);
         break;
     case 2:
         system("cls");
         printf("Фамилия студента %s\n", student->surname);
         printf("Для изменения введите фамилию: ");
         scanf("%s", &endterString);
-        student->surname = endterString;
+        strcpy(student->surname, endterString);
         break;
     case 3:
         system("cls");
         printf("Отчество студента %s\n", student->middleName);
         printf("Для изменения введите отчество: ");
         scanf("%s", &endterString);
-        student->middleName = endterString;
+        strcpy(student->middleName, endterString);
         break;
     case 4:
         system("cls");
         printf("Дата рождения студента %s\n", student->birthday);
         printf("Для изменения введите дату рождения: ");
         scanf("%s", &endterString);
-        student->birthday = endterString;
+        strcpy(student->birthday, endterString);
         break;
     case 5:
         //system("pause");
@@ -78,24 +77,15 @@ void toChangeDataStudent(Student* head) {
         scanf("%d", &choice);
         if (choice == 1)
         {
-            //---Не забыть очистить---
-            char nameExam[50];
-            nameExam[49] = 0;
-            char* dataExam = malloc(50);
-            
-            printf("Введите название предмета: ");
-            scanf("%s", nameExam);
-
-            printf("Введите дату сдачи предмета: ");
-            scanf("%s", &dataExam);
-            addExam(student, student->headExam, nameExam, dataExam);
+            addExam(student, student->headExam);
             printf("\nЭкзамен был создан\n");
 
 
         }
         else if (choice == 2)
         {
-            deleteExam(student, "информатика");
+            deleteExam(student);
+            printf("\nЭкзамен был удален\n");
         }
         break;
     default:
@@ -107,52 +97,62 @@ void toChangeDataStudent(Student* head) {
 
 
 
+
 int main() {
     system("chcp 1251 >> null");
 
-    int countStudents = 0;
-    Student* head = NULL;
+    
+    
     
 
-    addStudent(&head, "Андрей");
-    addExam(head, head->headExam, "литература", "01.01.23");
-    addExam(head, head->headExam, "информатика", "01.01.23");
-    
+    //addStudent(&head);
+    mainMenu();
 
-    addStudent(&head, "Саша");
+    //addStudent(&head, "Андрей");
+    //addExam(head, head->headExam, "литература", "01.01.23");
+    //addExam(head, head->headExam, "информатика", "01.01.23");
+    //
 
-    addStudent(&head, "Вика");
-    addExam(head, head->headExam, "литература", "01.01.23");
-    addExam(head, head->headExam, "матика", "01.01.23");
+    //addStudent(&head, "Саша");
 
-    addStudent(&head, "Лиза");
+    //addStudent(&head, "Вика");
+    //addExam(head, head->headExam, "литература", "01.01.23");
+    //addExam(head, head->headExam, "матика", "01.01.23");
 
-    addExam(head, head->headExam, "матика", "01.01.23");
+    //addStudent(&head, "Лиза");
+
+    //addExam(head, head->headExam, "матика", "01.01.23");
 
    
 
-    printStudentInfo(head, "fullInfo");
+    //printStudentInfo(head, "fullInfo");
 
-    //head = removeStudent(head, "Лиза");
-    printf("\n------------\n");
-    //head = sortStudent(head);
+    ////head = removeStudent(head, "Лиза");
+    //printf("\n------------\n");
+    ////head = sortStudent(head);
 
+
+
+
+
+    ////printStudentInfo(head, "fullInfo");
+    //printStudentInfo(head, "findInfo", "Андрей");
+    //printStudentInfo(head, "findInfo", "Андрей");
+    //printf("\n------------\n");
+    //toChangeDataStudent(head);
 
 
 
 
     //printStudentInfo(head, "fullInfo");
-    printStudentInfo(head, "findInfo", "Андрей");
-    printStudentInfo(head, "findInfo", "Андрей");
-    printf("\n------------\n");
-    toChangeDataStudent(head);
 
 
 
+    //addStudent(&head);
 
-    printStudentInfo(head, "fullInfo");
-
-    
+    //char name[50];
+    //scanf("%s", &name);
+    //findStudent(head, name);
 
 
 

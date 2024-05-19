@@ -7,12 +7,44 @@
 #include "student.h";
 
 
-void addStudent(Student** head, char* name) {
+int COUNT_STUDENTS = 0;
+Student* head = NULL;
+
+void addStudent(Student** head) {
+    system("cls");
+    if (COUNT_STUDENTS >= 20) {
+        printf("Максимальное кол-во студентов 20.\n");
+        return;
+    }
+    char name[50]; // Имя
+    char surname[50]; // Фамилия
+    char middleName[50]; // Отчество
+    char birthday[50]; // День рождения
+    char choice;
+    
 
     Student* newStudent = (Student*)malloc(sizeof(Student));
+    COUNT_STUDENTS++;
 
     newStudent->countExams = 0;
-    newStudent->name = name;
+
+    //---Заполнение анкеты стендента
+    printf("Введите имя студента: ");
+    scanf("%s", &name);
+    strcpy(newStudent->name, name);
+
+    printf("Введите фамилию студента: ");
+    scanf("%s", &surname);
+    strcpy(newStudent->surname, surname);
+
+    printf("Введите отчество студента: ");
+    scanf("%s", &middleName);
+    strcpy(newStudent->middleName, middleName);
+
+    printf("Введите дату рождения студента: ");
+    scanf("%s", &birthday);
+    strcpy(newStudent->birthday, birthday);
+
     newStudent->headExam = NULL;
     newStudent->next = NULL;
 
@@ -22,44 +54,110 @@ void addStudent(Student** head, char* name) {
     }
 
     *head = newStudent;
+
+
+
+    fseek(stdin, 0, SEEK_END);
+    printf("Добавить экзамены для студента?(y/n)(default no): ");
+    scanf("%c", &choice);
+    switch (choice)
+    {
+    case 'y':
+        addExam(newStudent, newStudent->headExam);
+        break;
+    default:
+        system("cls");
+        break;
+    }
 }
 
 //---headExam нам не нужен-----
-void addExam(Student* head, Student* headExam, char* name, char* examDate) {
+void addExam(Student* head) {
+    system("cls");
+    printStudentInfo(head, "findInfo", head->name);
+    if (head->countExams == 5) {
+        printf("Максимальное кол-во экзаменов 5.\n");
+        return;
+    }
+
     Exam* newExam = (Exam*)malloc(sizeof(Exam));
     Student* pathStudent = head;
 
+    char name[50];
+    char examDate[50];
     pathStudent->countExams++;
     //printf("%s", name);
-    newExam->name = name;
-    newExam->examDate = examDate;
 
-    newExam->prev = headExam;
+    printf("Добавьте название экзамена: ");
+    scanf("%s", &name); printf("\n");
+    strcpy(newExam->name, name);
+    
+    printf("Добавьте дату экзамена: ");
+    scanf("%s", &examDate); printf("\n");
+    strcpy(newExam->examDate, examDate);
+
+
+    newExam->prev = pathStudent->headExam;
     pathStudent->headExam = newExam;
+
+
+    if (head->countExams < 5) {
+        char choice;
+        fseek(stdin, 0, SEEK_END);
+        printf("Добавить еще экзамен?(y/n): ");
+        scanf("%c", &choice);
+        switch (choice)
+        {
+        case 'y':
+            addExam(head);
+            break;
+        default:
+            system("cls");
+            break;
+        }
+    }
+
 }
 
 
 
+//---В качестве аргумента мы передаем данные студента, экзамены которого мы хотим удалить---
+void deleteExam(Student* head) {
+    if (head->headExam == NULL) {
+        printf("Ни одного экзамена не найдено.\n");
+        return;
+    }
 
-void deleteExam(Student* head, char* nameExam) {
+    char nameExam[50];
+    printf("Введить название экзамена для удаления: ");
+    scanf("%s", &nameExam);
+
     Exam* exam = head->headExam;
-    if (exam->name == nameExam)
+    if (!strcmp(exam->name, nameExam))
     {
         Student* temp = exam;
         head->headExam = exam->prev;
+        head->countExams--;
         free(temp);
+        printf("Экзамен был удален.\n");
+        return;
     }
     else
     {
         while (exam->prev != NULL) {
-            if (exam->prev->name == nameExam)
+            if (!strcmp(exam->prev->name, nameExam)) 
             {
                 Student* temp = exam->prev;
                 exam->prev = exam->prev->prev;
+                head->countExams--;
                 free(temp);
+                printf("Экзамен был удален.\n");
+                return;
 
             }
         }
+        printf("Экзамен не был найден.\n");
+        return;
 
     }
 
@@ -77,9 +175,9 @@ Student* findStudent(Student* head, char* find) {
     {
         while (pthHead != NULL)
         {
-            if (pthHead->name == find)
+            if (!strcmp(pthHead->name, find))
             {
-                printf("Студент найден!\n");
+                printf("Информация о студенте:\n");
                 return pthHead;
             }
             pthHead = pthHead->prev;
@@ -91,15 +189,17 @@ Student* findStudent(Student* head, char* find) {
 
 Student* removeStudent(Student* head, char* find) {
     Student* tempHead = head;
-    if (head->name == find) {
+    if (!strcmp(head->name, find)) { // 
         Student* temp = head;
         head = head->prev;
         head->next = NULL;
         free(temp);
+        COUNT_STUDENTS--;
+        printf("Студент был удален.\n");
         return head;
     }
     while (head != NULL) {
-        if (head->name == find) {
+        if (!strcmp(head->name, find)) {
             Student* temp = head;
             if (head->prev != NULL) {
                 head->prev->next = head->next;
@@ -117,6 +217,8 @@ Student* removeStudent(Student* head, char* find) {
 
             head->prev = head;
             free(temp);
+            COUNT_STUDENTS--;
+            printf("Студент был удален.\n");
             return tempHead;
         }
         head = head->prev;
@@ -154,11 +256,6 @@ void saveToFile(Student* head, const char* filename) {
 
     fclose(file);
 }
-
-
-
-
-
 
 
 //----boubleSort----
@@ -278,11 +375,11 @@ void printStudentInfo(Student* head, char* option, ...) {
             {
                 exam = student->headExam;
                 printf("Имя: %s\n", student->name);
-                /*printf("Фамилия: %s\n", student->surname);
+                printf("Фамилия: %s\n", student->surname);
                 printf("Отчество: %s\n", student->middleName);
                 printf("Дата рождения: %s\n", student->birthday);
                 printf("Сведения о экзаенах:\n");
-                */
+                
                 while (exam != NULL) {
                     printf("    Название экзамена: %s\n", exam->name);
                     printf("    Дата сдачи: %s\n", exam->examDate);
@@ -302,11 +399,11 @@ void printStudentInfo(Student* head, char* option, ...) {
             Exam* exam = student->headExam;
 
             printf("Имя: %s\n", student->name);
-            /*printf("Фамилия: %s\n", student->surname);
+            printf("Фамилия: %s\n", student->surname);
             printf("Отчество: %s\n", student->middleName);
             printf("Дата рождения: %s\n", student->birthday);
             printf("Сведения о экзаенах:\n");
-            */
+            
             while (exam != NULL) {
                 printf("    Название экзамена: %s\n", exam->name);
                 printf("    Дата сдачи: %s\n", exam->examDate);
@@ -332,6 +429,41 @@ void printStudentInfo(Student* head, char* option, ...) {
 
             va_end(args);
         }
-
     }
 }
+
+void mainMenu() {
+    char choice = NULL;
+    while (choice != '0')
+    {
+        printf(
+            "(1) Добавить информацию о студенте.\n"
+            "(2) Удалить информацию о студенте.\n"
+            "(3) Корректировать информацию о студенте.\n"
+            "(4) Поиск по базе данных информации студента по ФИО.\n"
+            "(5) Сортировка базы данных по фамилиям студента (в алфавитном порядке).\n"
+            "(6) Вывод в консоль всей информации базы данных.\n"
+            "(7) Вывод в консоль найденную информацию из базы данных.\n"
+            "(8) Запись всей информации в файл из базы данных.\n"
+            "(9) Запись найденной инфомации в файл из базы данных.\n"
+            "(10) Добавить название для новой базы данных.\n"
+            "(0) Завершить процесс.\n"
+            "Ваш выбор: "
+        );
+
+        fseek(stdin, 0, SEEK_END);
+        scanf("%c", &choice);
+        switch (choice)
+        {
+        case '1':
+            addStudent(&head);
+            break;
+        case '6':
+            printStudentInfo(head, "fullInfo");
+            break;
+        default:
+            break;
+        }
+    }
+ }
+
