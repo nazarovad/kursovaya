@@ -177,7 +177,6 @@ Student* findStudent(Student* head, char* find) {
         {
             if (!strcmp(pthHead->name, find))
             {
-                printf("Информация о студенте:\n");
                 return pthHead;
             }
             pthHead = pthHead->prev;
@@ -479,10 +478,14 @@ void mainMenu() {
             addStudent(&head); // enable
             break;
         case '2':
-            printf("Введите имя студента, которого надо удалить: "); // endable
+            printf("Введите имя студента, которого надо удалить: "); 
             fseek(stdin, 0, SEEK_END);
             scanf("%s", &name);
-            removeStudent(&head, name);
+            removeStudent(&head, name); // enable
+            break;
+        case '3':
+            system("cls");
+            toChangeDataStudent(head); // enable
             break;
         case '6':
             system("cls");
@@ -494,3 +497,114 @@ void mainMenu() {
     }
  }
 
+void toChangeDataStudent(Student* head) {
+
+    char name[50];
+    printf("Для корректировки введите имя студента: ");
+    fseek(stdin, 0, SEEK_END);
+    scanf("%s", &name);
+    Student* student = findStudent(head, name);
+    if (student == false) {
+        return;
+    }
+
+    printStudentInfo(head, "findInfo", name);
+
+    int choice = -1;
+    char endterString[50];
+    int enterInteher;
+    while (choice != 0)
+    {
+        printf("Выбери действие: \n");
+        printf("(0) Выход для програмы\n");
+        printf("(1) Изменить имя студента \n");
+        printf("(2) Изменить фамилию студента \n");
+        printf("(3) Изменить отчество студента \n");
+        printf("(4) Изменить дату рождения студента \n");
+        printf("(5) Изменить экзаменационные сведения\n");
+        printf("Ваш выбор: ");
+        fseek(stdin, 0, SEEK_END);
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            system("cls");
+            printf("Имя студента %s\n", student->name);
+            printf("Для изменения введите имя: ");
+            fseek(stdin, 0, SEEK_END);
+            scanf("%s", &endterString);
+            strcpy(student->name, endterString);
+            system("cls");
+            break;
+        case 2:
+            system("cls");
+            printf("Фамилия студента %s\n", student->surname);
+            printf("Для изменения введите фамилию: ");
+            fseek(stdin, 0, SEEK_END);
+            scanf("%s", &endterString);
+            strcpy(student->surname, endterString);
+            system("cls");
+            break;
+        case 3:
+            system("cls");
+            printf("Отчество студента %s\n", student->middleName);
+            printf("Для изменения введите отчество: ");
+            fseek(stdin, 0, SEEK_END);
+            scanf("%s", &endterString);
+            strcpy(student->middleName, endterString);
+            system("cls");
+            break;
+        case 4:
+            system("cls");
+            printf("Дата рождения студента %s\n", student->birthday);
+            printf("Для изменения введите дату рождения: ");
+            fseek(stdin, 0, SEEK_END);
+            scanf("%s", &endterString);
+            strcpy(student->birthday, endterString);
+            system("cls");
+            break;
+        case 5:
+            //system("pause");
+            system("cls");
+            printf("Экзаменационные сведения: \n");
+
+            printStudentInfo(head, "findExamInfo", name);
+
+            printf("Выбери действие:\n");
+            printf("(1) Добавить экзамен\n");
+            printf("(2) Удалить экзамен\n");
+            printf("(3) Назад\n");
+            printf("Ваш выбор: ");
+            fseek(stdin, 0, SEEK_END);
+            scanf("%d", &choice);
+            if (choice == 1)
+            {
+                printf("Информация об экзаменах:\n");
+                printStudentInfo(student, "findExamInfo", student->name);
+                addExam(student, student->headExam);
+                printf("Экзамен был создан\n");
+                break;
+
+            }
+            else if (choice == 2)
+            {
+                deleteExam(student);
+                system("cls");
+                printf("Экзамен был удален\n");
+                break;
+            }
+            else if (choice == 3)
+            {
+                system("cls");
+                break;
+            }
+            system("cls");
+            break;
+        default:
+            break;
+        }
+    }
+
+    system("cls");
+}

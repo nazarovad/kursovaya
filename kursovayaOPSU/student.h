@@ -31,6 +31,7 @@ void saveToFile(Student* head, const char* filename);
 Student* sortStudent(Student* head);
 void printStudentInfo(Student* head, char* option, ...);
 void mainMenu();
+void toChangeDataStudent(Student* head);
 
 int COUNT_STUDENTS;
 
