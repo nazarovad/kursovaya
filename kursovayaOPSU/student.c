@@ -457,6 +457,7 @@ void printStudentInfo(Student* head, char* option, ...) {
 void mainMenu() {
     char choice = NULL;
     char name[50];
+    Student* findedStudent = false;
     while (choice != '0')
     {
         printf(
@@ -491,14 +492,32 @@ void mainMenu() {
             system("cls");
             toChangeDataStudent(head); // enabled
             break;
+        case '4':
+            system("cls");
+            fseek(stdin, 0, SEEK_END);
+            printf("Введите ФИО искомого студента: ");
+            scanf("%s", &name);
+            findedStudent = findStudent(head, name); // enabled
+            if (findedStudent != false) {
+                printf("Для вывода информации о найденном студенте выполните (7)\n");
+                system("pause");
+;            }
+            system("cls");
+            break;
         case '5':
             system("cls");
-            head = sortStudent(head);
-            printf("Список был отсортирован");
+            head = sortStudent(head); // enabled
+            if (head != NULL) {
+                printf("Список был отсортирован\n");
+            }
             break;
         case '6':
             system("cls");
             printStudentInfo(head, "fullInfo"); // enabled
+            break;
+        case '7':
+            system("cls");
+            printStudentInfo(head, "findInfo", findedStudent->name);
             break;
         default:
             break;
