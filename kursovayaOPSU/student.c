@@ -276,6 +276,10 @@ void saveToFile(Student* head, const char* filename) {
 
 //----boubleSort----
 Student* sortStudent(Student* head) {
+    if (head == NULL) {
+        printf("Студентов нет\n");
+        return NULL;
+    }
     if (head->prev == NULL && head->next == NULL) {
         return head;
     }
@@ -475,21 +479,26 @@ void mainMenu() {
         switch (choice)
         {
         case '1':
-            addStudent(&head); // enable
+            addStudent(&head); // enabled
             break;
         case '2':
             printf("Введите имя студента, которого надо удалить: "); 
             fseek(stdin, 0, SEEK_END);
             scanf("%s", &name);
-            removeStudent(&head, name); // enable
+            removeStudent(&head, name); // enabled
             break;
         case '3':
             system("cls");
-            toChangeDataStudent(head); // enable
+            toChangeDataStudent(head); // enabled
+            break;
+        case '5':
+            system("cls");
+            head = sortStudent(head);
+            printf("Список был отсортирован");
             break;
         case '6':
             system("cls");
-            printStudentInfo(head, "fullInfo"); // enable
+            printStudentInfo(head, "fullInfo"); // enabled
             break;
         default:
             break;
