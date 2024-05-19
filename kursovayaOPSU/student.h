@@ -26,7 +26,7 @@ void deleteExam(Student* head);
 
 // Поиск по ФИО
 Student* findStudent(Student* head, char* find);
-Student* removeStudent(Student* head, char* find);
+void removeStudent(Student** head, char* find);
 void saveToFile(Student* head, const char* filename);
 Student* sortStudent(Student* head);
 void printStudentInfo(Student* head, char* option, ...);

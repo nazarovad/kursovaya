@@ -187,45 +187,62 @@ Student* findStudent(Student* head, char* find) {
     return false;
 }
 
-Student* removeStudent(Student* head, char* find) {
-    Student* tempHead = head;
-    if (!strcmp(head->name, find)) { // 
-        Student* temp = head;
-        head = head->prev;
-        head->next = NULL;
-        free(temp);
-        COUNT_STUDENTS--;
-        printf("Студент был удален.\n");
-        return head;
-    }
-    while (head != NULL) {
-        if (!strcmp(head->name, find)) {
-            Student* temp = head;
-            if (head->prev != NULL) {
-                head->prev->next = head->next;
-            }
-            else {
-                head->next->prev = NULL;
-            }
-            if (head->next != NULL) {
-                head->next->prev = head->prev;
-            }
-            else {
-                head->prev->next = NULL;
-            }
 
-
-            head->prev = head;
+void removeStudent(Student** head, char* find) {
+    Student* tempHead = *head;
+    if (!strcmp((*head)->name, find)) { // 
+        
+        Student* temp = tempHead;
+        if ((*head)->prev == NULL && (*head)->next == NULL) {
+            *head = NULL;
             free(temp);
             COUNT_STUDENTS--;
             printf("Студент был удален.\n");
-            return tempHead;
+            return;
         }
-        head = head->prev;
+        if ((*head)->prev != NULL) {
+            (*head)->prev->next = (*head)->next;
+        }
+        else {
+            (*head)->next->prev = NULL;
+        }
+        if ((*head)->next != NULL) {
+            (*head)->next->prev = (*head)->prev;
+        }
+        else {
+            (*head)->prev->next = NULL;
+        }
+        *head = (*head)->prev;
+        free(temp);
+        COUNT_STUDENTS--;
+        printf("Студент был удален.\n");
+        return;
+    }
+    while (tempHead != NULL) {
+        if (!strcmp(tempHead->name, find)) {
+            Student* temp = tempHead;
+            if (tempHead->prev != NULL) {
+                tempHead->prev->next = tempHead->next;
+            }
+            else {
+                tempHead->next->prev = NULL;
+            }
+            if (tempHead->next != NULL) {
+                tempHead->next->prev = tempHead->prev;
+            }
+            else {
+                tempHead->prev->next = NULL;
+            }
+
+            free(temp);
+            COUNT_STUDENTS--;
+            printf("Студент был удален.\n");
+            return;
+        }
+        tempHead = tempHead->prev;
     }
 
     printf("Студент не был найден");
-    return tempHead;
 
 }
 
@@ -411,6 +428,8 @@ void printStudentInfo(Student* head, char* option, ...) {
             }
 
             va_end(args);
+            system("pause");
+            system("cls");
         }
         else if (option == "findExamInfo") {
             va_start(args, option);
@@ -434,6 +453,7 @@ void printStudentInfo(Student* head, char* option, ...) {
 
 void mainMenu() {
     char choice = NULL;
+    char name[50];
     while (choice != '0')
     {
         printf(
@@ -456,10 +476,17 @@ void mainMenu() {
         switch (choice)
         {
         case '1':
-            addStudent(&head);
+            addStudent(&head); // enable
+            break;
+        case '2':
+            printf("Введите имя студента, которого надо удалить: "); // endable
+            fseek(stdin, 0, SEEK_END);
+            scanf("%s", &name);
+            removeStudent(&head, name);
             break;
         case '6':
-            printStudentInfo(head, "fullInfo");
+            system("cls");
+            printStudentInfo(head, "fullInfo"); // enable
             break;
         default:
             break;
