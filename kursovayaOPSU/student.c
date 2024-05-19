@@ -30,7 +30,7 @@ void addExam(Student* head, Student* headExam, char* name, char* examDate) {
     Student* pathStudent = head;
 
     pathStudent->countExams++;
-
+    //printf("%s", name);
     newExam->name = name;
     newExam->examDate = examDate;
 

@@ -3,18 +3,18 @@
 
 
 typedef struct Exam{
-    char* name;
-    char* examDate;
+    char name[50];
+    char examDate[50];
     struct Exam* prev;
 } Exam;
 
 typedef struct Student {
     Exam exam;
-    char* name; // Имя
-    char* surname; // Фамилия
-    char* middleName; // Отчество
+    char name[50]; // Имя
+    char surname[50]; // Фамилия
+    char middleName[50]; // Отчество
     int countExams; // Кол-во экзаменов 
-    char* birthday; // День рождения
+    char birthday[50]; // День рождения
     struct Exam* headExam;
     struct Student* prev;
     struct Student* next;

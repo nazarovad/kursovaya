@@ -9,8 +9,9 @@
 
 
 void toChangeDataStudent(Student* head) {
+
     char* name = "Андрей";
-    printf("Введите имя студента");
+    printf("Для корректировки введите имя студента");
     //scanf("%s", &name);
     Student* student = findStudent(head, name);
     if (student == false) {
@@ -64,7 +65,7 @@ void toChangeDataStudent(Student* head) {
         student->birthday = endterString;
         break;
     case 5:
-        system("pause");
+        //system("pause");
         system("cls");
         printf("Экзаменационные сведения: \n");
 
@@ -78,16 +79,18 @@ void toChangeDataStudent(Student* head) {
         if (choice == 1)
         {
             //---Не забыть очистить---
-            char* nameExam = (char*)malloc(50);
-            char* dataExam = (char*)malloc(50);
+            char nameExam[50];
+            nameExam[49] = 0;
+            char* dataExam = malloc(50);
             
             printf("Введите название предмета: ");
             scanf("%s", nameExam);
 
             printf("Введите дату сдачи предмета: ");
-            scanf("%s", dataExam);
+            scanf("%s", &dataExam);
             addExam(student, student->headExam, nameExam, dataExam);
             printf("\nЭкзамен был создан\n");
+
 
         }
         else if (choice == 2)
@@ -101,29 +104,6 @@ void toChangeDataStudent(Student* head) {
     
 }
 
-//void deleteExam(Student* head, char* nameExam) {
-//    Exam* exam = head->headExam;
-//    if (exam->name == nameExam)
-//    {
-//        Student* temp = exam;
-//        head->headExam = exam->prev;
-//        free(temp);
-//    }
-//    else
-//    {
-//        while (exam->prev != NULL) {
-//            if (exam->prev->name == nameExam)
-//            {
-//                Student* temp = exam->prev;
-//                exam->prev = exam->prev->prev;
-//                free(temp);
-//
-//            }
-//        }
-//
-//    }
-// 
-//}
 
 
 
