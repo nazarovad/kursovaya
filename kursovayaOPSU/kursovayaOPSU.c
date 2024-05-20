@@ -10,7 +10,7 @@
 
 int main() {
     system("chcp 1251 >> null");
-
+    
     mainMenu();
 
 	return 0;

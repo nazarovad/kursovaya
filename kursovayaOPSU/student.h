@@ -43,6 +43,9 @@ void printStudentInfo(Student* head, char* option, ...);
 void mainMenu();
 void toChangeDataStudent(Student* head);
 
+
+void saveStudentsToFile(Student* head);
+void loadStudentsFromFile(Student** head);
 int COUNT_STUDENTS;
 
 
