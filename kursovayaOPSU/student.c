@@ -632,6 +632,7 @@ void mainMenu() {
             "Ваш выбор: "
         );
 
+
         fseek(stdin, 0, SEEK_END);
         scanf("%c", &choice);
         switch (choice)
@@ -901,63 +902,6 @@ void loadStudentsFromFile(Student** head) {
         printf("%s", line);
     }
 
-
-
-    //char buffer[1024];
-    //Student* current = NULL;
-
-    //while (fgets(buffer, sizeof(buffer), file) != NULL) {
-    //    if (strncmp(buffer, "Имя:", 4) == 0) {
-    //        Student* newStudent = (Student*)malloc(sizeof(Student));
-    //        memset(newStudent, 0, sizeof(Student));
-    //        sscanf(buffer, "Имя: %s", newStudent->name);
-
-    //        fgets(buffer, sizeof(buffer), file); // Фамилия
-    //        sscanf(buffer, "Фамилия: %s", newStudent->surname);
-
-    //        fgets(buffer, sizeof(buffer), file); // Отчество
-    //        sscanf(buffer, "Отчество: %s", newStudent->middleName);
-
-    //        fgets(buffer, sizeof(buffer), file); // День рождения
-    //        sscanf(buffer, "День рождения: %s", newStudent->birthday);
-
-    //        fgets(buffer, sizeof(buffer), file); // Количество экзаменов
-    //        sscanf(buffer, "Количество экзаменов: %d", &newStudent->countExams);
-
-    //        fgets(buffer, sizeof(buffer), file); // Количество зачетов
-    //        sscanf(buffer, "Количество зачетов: %d", &newStudent->countTests);
-
-    //        Exam* currentExam = NULL;
-    //        Test* currentTest = NULL;
-
-    //        while (fgets(buffer, sizeof(buffer), file) != NULL) {
-    //            if (strncmp(buffer, "Экзамен:", 7) == 0) {
-    //                Exam* newExam = (Exam*)malloc(sizeof(Exam));
-    //                sscanf(buffer, "Экзамен: %[^,], Дата: %s", newExam->name, newExam->examDate);
-    //                newExam->prev = newStudent->headExam;
-    //                newStudent->headExam = newExam;
-    //            }
-    //            else if (strncmp(buffer, "Зачет:", 6) == 0) {
-    //                Test* newTest = (Test*)malloc(sizeof(Test));
-    //                sscanf(buffer, "Зачет: %[^,], Дата: %s", newTest->name, newTest->testDate);
-    //                newTest->prev = newStudent->headTest;
-    //                newStudent->headTest = newTest;
-    //            }
-    //            else if (strlen(buffer) <= 2) {
-    //                break; // Пустая строка, переходим к следующему студенту
-    //            }
-    //        }
-
-    //        if (*head == NULL) {
-    //            *head = newStudent;
-    //        }
-    //        else {
-    //            newStudent->prev = current;
-    //            current->next = newStudent;
-    //        }
-    //        current = newStudent;
-    //    }
-    //}
 
     fclose(file);
     printf("Данные о студентах загружены из файла.\n");
