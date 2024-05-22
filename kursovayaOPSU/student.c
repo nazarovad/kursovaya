@@ -611,6 +611,7 @@ void printStudentInfo(Student* head, char* option, ...) {
     }
 }
 
+// Надо все переделать
 void mainMenu() {
     char choice = NULL;
     char name[50];
@@ -904,6 +905,6 @@ void loadStudentsFromFile(Student** head) {
 
 
     fclose(file);
-    printf("Данные о студентах загружены из файла.\n");
+    printf("Данные о студентах загружены из файла\n");
 }
 
