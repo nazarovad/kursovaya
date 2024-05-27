@@ -237,8 +237,6 @@ void deleteExam(Student* head) {
 
 
 
-
-
 void deleteTest(Student* head) {
     if (head->headTest == NULL) {
         printf("Ни одного зачета не найдено.\n");
@@ -278,9 +276,6 @@ void deleteTest(Student* head) {
 
     }
 }
-
-
-
 
 
 
@@ -680,11 +675,11 @@ void mainMenu() {
             break;
         case '8':
             system("cls");
-            saveStudentsToFile(head);
+            saveStudentsToFile(head); // endavled
             break;
-        case 'a':
+        case '9': 
             system("cls");
-            loadStudentsFromFile(&head);
+            loadStudentsFromFile(&head); // endabled
         default:
             break;
         }
@@ -860,12 +855,10 @@ void saveStudentsToFile(Student* head) {
         if (currentExam == NULL) {
             fprintf(file, "Экзамен: empty");
         }
-        else
-        {
-            fprintf(file,"Экзамен:");
-        }
         while (currentExam != NULL) {
-            fprintf(file, " Название: %s, Дата: %s;", currentExam->name, currentExam->examDate);
+            fprintf(file, "Экзамен название: %s\n", currentExam->name);
+            fprintf(file, "Экзамен дата: %s\n", currentExam->examDate);
+
             currentExam = currentExam->prev;
         }
 
@@ -874,14 +867,13 @@ void saveStudentsToFile(Student* head) {
         if (currentTest == NULL) {
             fprintf(file, "\nЗачет: empty");
         }
-        else {
-            fprintf(file, "\nЗачет:");
-        }
         while (currentTest != NULL) {
-            fprintf(file, " Название: %s, Дата: %s;", currentTest->name, currentTest->testDate);
+            fprintf(file, "Зачет название: %s\n", currentTest->name);
+            fprintf(file, "Зачет дата: %s\n", currentTest->testDate);
             currentTest = currentTest->prev;
         }
 
+        fprintf(file, "\n");
 
         current = current->prev;
     }
@@ -891,20 +883,184 @@ void saveStudentsToFile(Student* head) {
 }
 
 void loadStudentsFromFile(Student** head) {
+    if (*head != NULL) {
+        printf("Данные уже загружены");
+        return;
+    }
     FILE* file = fopen("students.txt", "r");
     if (file == NULL) {
         printf("Файл не найден или пуст.\n");
         return;
     }
+    char line[1024]; // буфер для чтения строки
+
+    Student* student = *head;
+
+    char str1[50];
+    char str2[50];
 
 
-    char line[1024];
-    while (fgets(line, sizeof(line), file)) {
-        printf("%s", line);
+    while (fgets(line, 1024, file)) {
+        if (strstr(line, "Имя:")) {
+            if (student != NULL) {
+                student->next = NULL;
+                student->prev = *head;
+            }
+            if (*head != NULL) {
+                (*head)->next = student;
+            }
+
+            *head = student;
+            
+            student = (Student*)malloc(sizeof(Student));
+            COUNT_STUDENTS++;
+            student->headExam = NULL;
+            student->headTest = NULL;
+            sscanf(line, "Имя: %49s", student->name);
+        }
+        else if (strstr(line, "Фамилия:")) {
+            sscanf(line, "Фамилия: %s", student->surname);
+        }
+        else if (strstr(line, "Отчество:")) {
+            sscanf(line, "Отчество: %49s", student->middleName);
+        }
+        else if (strstr(line, "День рождения:")) {
+            sscanf(line, "День рождения: %49s", student->birthday);
+        }
+        else if (strstr(line, "Количество экзаменов:")) {
+            sscanf(line, "Количество экзаменов: %d", &student->countExams);
+        }
+        else if (strstr(line, "Количество зачетов:")) {
+            sscanf(line, "Количество зачетов: %d", &student->countTests);
+        }
+        else if (strstr(line, "Экзамен название: ")) {
+
+            sscanf(line, "Экзамен название: %s,", &str1);
+
+            Exam* newExam = (Exam*)malloc(sizeof(Exam));
+
+            strcpy(newExam->name, str1);
+
+            newExam->prev = student->headExam;
+            student->headExam = newExam;
+        }
+        else if (strstr(line, "Экзамен дата: ")) {
+            sscanf(line, "Экзамен дата: %s,", &str1);
+            
+            strcpy(student->headExam->examDate, str1);
+        }
+        else if (strstr(line, "Зачет название: %49s")) {
+            fseek(stdin, 0, SEEK_END);
+            sscanf(line, "Зачет название: %49s", str1);
+
+            Test* newTest = (Test*)malloc(sizeof(Test));
+
+            strcpy(newTest->name, str1);
+
+            newTest->prev = student->headTest;
+            student->headTest = newTest;
+       
+        }
+        else if (strstr(line, "Зачет дата: %49s")) {
+            sscanf(line, "Зачет дата: %49s", str1);
+            strcpy(student->headTest->testDate, str1);
+        }
+        else if (strstr(line, "Экзамен: empty")) {
+            student->headExam = NULL;
+        }
+        else if (strstr(line, "Зачет: empty")) {
+            student->headTest = NULL;
+        }
     }
 
 
-    fclose(file);
+    student->next = NULL;
+
+    student->prev = *head;
+    if (*head != NULL) {
+        (*head)->next = student;
+    }
+
+    *head = student;
+
     printf("Данные о студентах загружены из файла\n");
+    fclose(file);
+    
 }
 
+void addStudentFromFile(char line[], Student** head) {
+    Student* student = (Student*)malloc(sizeof(Student));
+    COUNT_STUDENTS++;
+
+    char str1[50];
+    char str2[50];
+
+    student->headExam = NULL;
+    student->headTest = NULL;
+
+    if (strstr(line, "Имя:")) {
+        sscanf(line, "Имя: %49s", student->name);
+    }
+    else if (strstr(line, "Фамилия:")) {
+        sscanf(line, "Фамилия: %49s", student->surname);
+    }
+    else if (strstr(line, "Отчество:")) {
+        sscanf(line, "Отчество: %49s", student->middleName);
+    }
+    else if (strstr(line, "День рождения:")) {
+        sscanf(line, "День рождения: %49s", student->birthday);
+    }
+    else if (strstr(line, "Количество экзаменов:")) {
+        sscanf(line, "Количество экзаменов: %d", &student->countExams);
+    }
+    else if (strstr(line, "Количество зачетов:")) {
+        sscanf(line, "Количество зачетов: %d", &student->countTests);
+    }
+    else if (strstr(line, "Экзамен название: ")) {
+
+        sscanf(line, "Экзамен название: %s,", &str1);
+
+        Exam* newExam = (Exam*)malloc(sizeof(Exam));
+
+        strcpy(newExam->name, str1);
+
+        newExam->prev = student->headExam;
+        student->headExam = newExam;
+    }
+    else if (strstr(line, "Экзамен дата: ")) {
+        sscanf(line, "Экзамен дата: %s,", &str1);
+
+        strcpy(student->headExam->examDate, str1);
+    }
+    else if (strstr(line, "Зачет название: %49s")) {
+        fseek(stdin, 0, SEEK_END);
+        sscanf(line, "Зачет название: %49s", str1);
+
+        Test* newTest = (Test*)malloc(sizeof(Test));
+
+        strcpy(newTest->name, str1);
+
+        newTest->prev = student->headTest;
+        student->headTest = newTest;
+
+    }
+    else if (strstr(line, "Зачет дата: %49s")) {
+        sscanf(line, "Зачет дата: %49s", str1);
+        strcpy(student->headTest->testDate, str1);
+    }
+    else if (strstr(line, "Экзамен: empty")) {
+        student->headExam = NULL;
+    }
+    else if (strstr(line, "Зачет: empty")) {
+        student->headTest = NULL;
+    }
+
+    student->next = NULL;
+
+    student->prev = *head;
+    if (*head != NULL) {
+        (*head)->next = student;
+    }
+
+    *head = student;
+}
