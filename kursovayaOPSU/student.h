@@ -25,32 +25,14 @@ typedef struct Student {
     char birthday[50]; // День рождения
     struct Exam* headExam;
     struct Test* headTest;
-    struct Student* prev;
-    struct Student* next;
 } Student;
 
-void addStudent(Student** head);
-void addExam(Student* head);
-void addTest(Student* head);
-void deleteExam(Student* head);
 
-// Поиск по ФИО
-Student* findStudent(Student* head, char* find);
-void removeStudent(Student** head, char* find);
-void saveToFile(Student* head, const char* filename);
-Student* sortStudent(Student* head);
-void printStudentInfo(Student* head, char* option, ...);
-void mainMenu();
-void toChangeDataStudent(Student* head);
-
-
-void saveStudentsToFile(Student* head);
-void loadStudentsFromFile(Student** head);
-int COUNT_STUDENTS;
-
-
-
-
+void mainMenu(Student** studentList);
+void addStudent(Student** studentList);
+void printStudents(Student** studentList);
+void addExam(Student* student, Student* headExam);
+void addTest(Student* student);
 #endif
 
 

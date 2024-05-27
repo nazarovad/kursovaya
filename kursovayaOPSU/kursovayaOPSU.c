@@ -9,9 +9,12 @@
 
 
 int main() {
+    Student** studentsList = (Student*)malloc(sizeof(Student));
     system("chcp 1251 >> null");
     
-    mainMenu();
+    mainMenu(&studentsList);
 
+
+    free(studentsList);
 	return 0;
 }
