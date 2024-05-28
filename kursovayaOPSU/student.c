@@ -291,7 +291,7 @@ Student* findStudent(Student* head, char* find) {
     {
         while (pthHead != NULL)
         {
-            if (!strcmp(pthHead->name, find))
+            if (!strcmp(pthHead->name, find) || !strcmp(pthHead->surname, find) || !strcmp(pthHead->middleName, find))
             {
                 return pthHead;
             }
@@ -675,11 +675,11 @@ void mainMenu() {
             break;
         case '8':
             system("cls");
-            saveStudentsToFile(head); // endavled
+            saveStudentsToFile(head); // enabled
             break;
         case '9': 
             system("cls");
-            loadStudentsFromFile(&head); // endabled
+            loadStudentsFromFile(&head); // enabled
         default:
             break;
         }
@@ -836,7 +836,10 @@ void toChangeDataStudent(Student* head) {
 
 
 void saveStudentsToFile(Student* head) {
-    FILE* file = fopen("students.txt", "w");
+    char* nameFile ;
+    printf("Введите название базы данных: ");
+    scanf("%s", &nameFile);
+    FILE* file = fopen(&nameFile, "w");
     if (file == NULL) {
         printf("Не удалось открыть файл для записи.\n");
         return;
@@ -988,79 +991,14 @@ void loadStudentsFromFile(Student** head) {
     
 }
 
-void addStudentFromFile(char line[], Student** head) {
-    Student* student = (Student*)malloc(sizeof(Student));
-    COUNT_STUDENTS++;
+Student* returnArrayStudents(Student* head) {
+    Student* arr = (Student*)malloc(sizeof(head));
+    int count = 0;
+    while (head != NULL) {
+        arr = realloc(arr, (sizeof(head) + sizeof(head->prev)));
+        arr[count] = *head;
+        count++;
 
-    char str1[50];
-    char str2[50];
-
-    student->headExam = NULL;
-    student->headTest = NULL;
-
-    if (strstr(line, "Имя:")) {
-        sscanf(line, "Имя: %49s", student->name);
+        head->prev;
     }
-    else if (strstr(line, "Фамилия:")) {
-        sscanf(line, "Фамилия: %49s", student->surname);
-    }
-    else if (strstr(line, "Отчество:")) {
-        sscanf(line, "Отчество: %49s", student->middleName);
-    }
-    else if (strstr(line, "День рождения:")) {
-        sscanf(line, "День рождения: %49s", student->birthday);
-    }
-    else if (strstr(line, "Количество экзаменов:")) {
-        sscanf(line, "Количество экзаменов: %d", &student->countExams);
-    }
-    else if (strstr(line, "Количество зачетов:")) {
-        sscanf(line, "Количество зачетов: %d", &student->countTests);
-    }
-    else if (strstr(line, "Экзамен название: ")) {
-
-        sscanf(line, "Экзамен название: %s,", &str1);
-
-        Exam* newExam = (Exam*)malloc(sizeof(Exam));
-
-        strcpy(newExam->name, str1);
-
-        newExam->prev = student->headExam;
-        student->headExam = newExam;
-    }
-    else if (strstr(line, "Экзамен дата: ")) {
-        sscanf(line, "Экзамен дата: %s,", &str1);
-
-        strcpy(student->headExam->examDate, str1);
-    }
-    else if (strstr(line, "Зачет название: %49s")) {
-        fseek(stdin, 0, SEEK_END);
-        sscanf(line, "Зачет название: %49s", str1);
-
-        Test* newTest = (Test*)malloc(sizeof(Test));
-
-        strcpy(newTest->name, str1);
-
-        newTest->prev = student->headTest;
-        student->headTest = newTest;
-
-    }
-    else if (strstr(line, "Зачет дата: %49s")) {
-        sscanf(line, "Зачет дата: %49s", str1);
-        strcpy(student->headTest->testDate, str1);
-    }
-    else if (strstr(line, "Экзамен: empty")) {
-        student->headExam = NULL;
-    }
-    else if (strstr(line, "Зачет: empty")) {
-        student->headTest = NULL;
-    }
-
-    student->next = NULL;
-
-    student->prev = *head;
-    if (*head != NULL) {
-        (*head)->next = student;
-    }
-
-    *head = student;
 }

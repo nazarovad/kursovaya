@@ -46,7 +46,7 @@ void toChangeDataStudent(Student* head);
 
 void saveStudentsToFile(Student* head);
 void loadStudentsFromFile(Student** head);
-void addStudentFromFile(char line[], Student** head);
+Student* returnArrayStudents(Student* head);
 int COUNT_STUDENTS;
 
 
